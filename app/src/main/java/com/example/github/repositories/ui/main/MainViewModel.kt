@@ -4,29 +4,24 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.github.repositories.data.*
-import com.example.github.repositories.data.source.remote.GitHubEndpoints
-import com.example.github.repositories.data.source.remote.RepositoryDTO
+import com.example.github.repositories.core.data.*
+import com.example.github.repositories.core.data.remote.GitHubEndpoints
+import com.example.github.repositories.core.domain.Repository
+import com.example.github.repositories.core.usecases.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor() : ViewModel() {
+class MainViewModel @Inject constructor(private val useCases: UseCases) : ViewModel() {
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(GITHUB_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val service: GitHubEndpoints = retrofit.create(GitHubEndpoints::class.java)
+    private val _repositories = MutableLiveData<List<Repository>>()
+    val repositories: LiveData<List<Repository>> = _repositories
 
-    private val _repositories = MutableLiveData<List<RepositoryDTO>>()
-    val repositories: LiveData<List<RepositoryDTO>> = _repositories
+    private val fetchReposUseCase = useCases.fetchReposUseCase
 
     init {
         fetchItems()
@@ -36,10 +31,8 @@ class MainViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
             if (repositories.value.isNullOrEmpty() || isForceFetch) {
                 delay(NETWORK_DELAY) // This is to simulate network latency, please don't remove!
-                var response = withContext(Dispatchers.IO) {
-                    service.searchRepositories(QUERY, SORT, ORDER).execute().body()
-                }
-                _repositories.value = response?.items?.take(itemsToShow) ?: emptyList()
+                var response = fetchReposUseCase.invoke()
+                _repositories.value = response?.take(itemsToShow)
             }
         }
 }

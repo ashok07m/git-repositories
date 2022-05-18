@@ -6,13 +6,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.github.repositories.R
-import com.example.github.repositories.data.source.local.LocalDataStore
-import com.example.github.repositories.data.source.remote.RepositoryDTO
+import com.example.github.repositories.core.data.local.LocalDataStore
+import com.example.github.repositories.core.domain.Repository
 import com.example.github.repositories.databinding.ItemBinding
 import java.util.*
 
-class RepositoryAdapter constructor(val itemClickListener: (RepositoryDTO) -> Unit) :
-    ListAdapter<RepositoryDTO, RepositoryAdapter.ViewHolder>(ItemsDiffCallback) {
+class RepositoryAdapter constructor(val itemClickListener: (Repository) -> Unit) :
+    ListAdapter<Repository, RepositoryAdapter.ViewHolder>(ItemsDiffCallback) {
 
     override fun getItemCount(): Int = currentList.size
 
@@ -42,12 +42,12 @@ class RepositoryAdapter constructor(val itemClickListener: (RepositoryDTO) -> Un
 
                 author.text = item.owner?.login
 
-                image.setImageResource(
-                    if (LocalDataStore.instance.getBookmarks().contains(item))
-                        R.drawable.baseline_bookmark_black_24
-                    else
-                        R.drawable.baseline_bookmark_border_black_24
-                )
+//                image.setImageResource(
+//                    if (LocalDataStore.instance.getBookmarks().contains(item))
+//                        R.drawable.baseline_bookmark_black_24
+//                    else
+//                        R.drawable.baseline_bookmark_border_black_24
+//                )
 
                 newsContainer.setOnClickListener {
                     itemClickListener(item)
@@ -56,12 +56,12 @@ class RepositoryAdapter constructor(val itemClickListener: (RepositoryDTO) -> Un
         }
     }
 
-    object ItemsDiffCallback : DiffUtil.ItemCallback<RepositoryDTO>() {
-        override fun areItemsTheSame(oldItem: RepositoryDTO, newItem: RepositoryDTO): Boolean {
+    object ItemsDiffCallback : DiffUtil.ItemCallback<Repository>() {
+        override fun areItemsTheSame(oldItem: Repository, newItem: Repository): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: RepositoryDTO, newItem: RepositoryDTO): Boolean {
+        override fun areContentsTheSame(oldItem: Repository, newItem: Repository): Boolean {
             return oldItem == newItem
         }
     }

@@ -5,7 +5,7 @@ import android.view.View
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.github.repositories.data.source.remote.OwnerDTO
+import com.example.github.repositories.core.domain.response.OwnerDTO
 import com.example.github.repositories.databinding.FragmentUserBinding
 import com.example.github.repositories.ui.adapters.RepositoryAdapter
 import com.example.github.repositories.ui.base.BaseFragment

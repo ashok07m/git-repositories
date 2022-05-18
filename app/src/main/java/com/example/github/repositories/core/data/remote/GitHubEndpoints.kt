@@ -1,5 +1,8 @@
-package com.example.github.repositories.data.source.remote
+package com.example.github.repositories.core.data.remote
 
+import com.example.github.repositories.core.domain.response.RepositoryDTO
+import com.example.github.repositories.core.domain.response.ResponseDTO
+import com.example.github.repositories.core.domain.response.UserDTO
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -12,7 +15,7 @@ interface GitHubEndpoints {
         @Query("q") q: String,
         @Query("sort") sort: String,
         @Query("order") order: String
-    ): Call<Response>
+    ): Call<ResponseDTO>
 
     @GET("users/{username}")
     fun getUser(

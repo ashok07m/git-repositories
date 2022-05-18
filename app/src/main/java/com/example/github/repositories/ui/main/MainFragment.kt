@@ -27,7 +27,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
             }
 
             viewModel.repositories.observe(viewLifecycleOwner) {
-                repositoryAdapter.submitList(it.take(20))
+                repositoryAdapter.submitList(it)
             }
         }
     }
