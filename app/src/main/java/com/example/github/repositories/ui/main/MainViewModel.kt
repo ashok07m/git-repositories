@@ -6,10 +6,12 @@ import com.example.github.repositories.data.*
 import com.example.github.repositories.data.source.remote.GitHubEndpoints
 import com.example.github.repositories.data.source.remote.RepositoryDTO
 import com.example.github.repositories.data.source.remote.Response
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+@HiltViewModel
 class MainViewModel : ViewModel() {
 
     private val retrofit = Retrofit.Builder()
