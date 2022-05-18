@@ -1,46 +1,30 @@
 package com.example.github.repositories.ui.main
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.github.repositories.R
+import com.example.github.repositories.databinding.FragmentMainBinding
 import com.example.github.repositories.ui.adapters.RepositoryAdapter
+import com.example.github.repositories.ui.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainFragment : Fragment() {
+class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::inflate) {
 
-    private val viewModel : MainViewModel  by  viewModels()
+    private val viewModel: MainViewModel by viewModels()
 
-    private var swipeRefresh: SwipeRefreshLayout? = null
-    private var recyclerview: RecyclerView? = null
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    @SuppressLint("SetTextI18n")
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_main, container, false)
-        viewModel.fetchItems()
+        with(binding) {
+            swipeRefresh.setOnRefreshListener { viewModel.refresh() }
+            newsList.layoutManager = LinearLayoutManager(context)
 
-        swipeRefresh = view.findViewById(R.id.swipe_refresh)
-        swipeRefresh!!.setOnRefreshListener { viewModel.refresh() }
-
-        recyclerview = view.findViewById(R.id.news_list)
-        recyclerview!!.layoutManager = LinearLayoutManager(context)
-
-        viewModel.repositories.observeForever {
-            val adapter = RepositoryAdapter(it.take(20).toMutableList(), requireActivity())
-            recyclerview!!.adapter = adapter
+            viewModel.repositories.observeForever {
+                val adapter = RepositoryAdapter(it.take(20).toMutableList(), requireActivity())
+                newsList.adapter = adapter
+            }
         }
-        return view
     }
 }

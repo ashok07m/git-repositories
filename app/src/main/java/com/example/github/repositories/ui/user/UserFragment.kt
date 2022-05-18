@@ -1,55 +1,39 @@
 package com.example.github.repositories.ui.user
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.net.toUri
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.RecyclerView
-import com.example.github.repositories.R
-import com.example.github.repositories.ui.adapters.RepositoryAdapter
 import com.example.github.repositories.data.source.remote.OwnerDTO
+import com.example.github.repositories.databinding.FragmentUserBinding
+import com.example.github.repositories.ui.adapters.RepositoryAdapter
+import com.example.github.repositories.ui.base.BaseFragment
 import com.squareup.picasso.Picasso
+import dagger.hilt.android.AndroidEntryPoint
 
-class UserFragment(private val user: OwnerDTO) : Fragment() {
+@AndroidEntryPoint
+class UserFragment(private val user: OwnerDTO) :
+    BaseFragment<FragmentUserBinding>(FragmentUserBinding::inflate) {
 
-    private val viewModel : UserViewModel by  viewModels()
+    private val viewModel: UserViewModel by viewModels()
 
-    private var title: TextView? = null
-    private var image: ImageView? = null
-    private var detail: TextView? = null
-    private var url: TextView? = null
-    private var list: RecyclerView? = null
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        with(binding) {
+            title.text = user.login
 
-    @SuppressLint("SetTextI18n")
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_user, container, false)
-        title = view.findViewById(R.id.title)
-        image = view.findViewById(R.id.image)
-        detail = view.findViewById(R.id.detail)
-        url = view.findViewById(R.id.url)
-        list = view.findViewById(R.id.list)
+            Picasso.get().load(user.avatar_url.toUri()).into(image)
 
-        title!!.text = user.login
-        Picasso.get().load(user.avatar_url.toUri()).into(image)
+            viewModel.fetchUser(user.login)
 
-        viewModel.fetchUser(user.login)
-        viewModel.user.observeForever {
-            detail!!.text = "Twitter handle: " + it.twitter_username
-            viewModel.fetchRepositories(it.repos_url!!)
+            viewModel.user.observeForever {
+                detail!!.text = "Twitter handle: " + it.twitter_username
+                viewModel.fetchRepositories(it.repos_url!!)
+            }
+
+            viewModel.repositories.observeForever {
+                list!!.adapter = RepositoryAdapter(it.toMutableList(), requireActivity())
+            }
         }
-        viewModel.repositories.observeForever {
-            list!!.adapter = RepositoryAdapter(it.toMutableList(), requireActivity())
-        }
-        return view
     }
 }

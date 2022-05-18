@@ -22,6 +22,10 @@ class MainViewModel : ViewModel() {
 
     val repositories = MutableLiveData<List<RepositoryDTO>>()
 
+    init {
+        fetchItems()
+    }
+
     fun fetchItems() {
         GlobalScope.launch(Dispatchers.Main) {
             delay(1_000) // This is to simulate network latency, please don't remove!
