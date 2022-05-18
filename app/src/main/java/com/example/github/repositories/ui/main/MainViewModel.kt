@@ -35,7 +35,7 @@ class MainViewModel @Inject constructor() : ViewModel() {
     fun fetchItems(itemsToShow: Int = INITIAL_ITEMS_LOAD_COUNT, isForceFetch: Boolean = false) =
         viewModelScope.launch {
             if (repositories.value.isNullOrEmpty() || isForceFetch) {
-                delay(1_000) // This is to simulate network latency, please don't remove!
+                delay(NETWORK_DELAY) // This is to simulate network latency, please don't remove!
                 var response = withContext(Dispatchers.IO) {
                     service.searchRepositories(QUERY, SORT, ORDER).execute().body()
                 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.github.repositories.data.GITHUB_URL
+import com.example.github.repositories.data.NETWORK_DELAY
 import com.example.github.repositories.data.source.remote.GitHubEndpoints
 import com.example.github.repositories.data.source.remote.RepositoryDTO
 import com.example.github.repositories.data.source.remote.UserDTO
@@ -31,7 +32,7 @@ class UserViewModel @Inject constructor() : ViewModel() {
 
     fun fetchUser(username: String) = viewModelScope.launch {
         if (user.value == null) {
-            delay(1_000) // This is to simulate network latency, please don't remove!
+            delay(NETWORK_DELAY) // This is to simulate network latency, please don't remove!
             val response = withContext(Dispatchers.IO) {
                 service.getUser(username).execute()
             }
@@ -41,7 +42,7 @@ class UserViewModel @Inject constructor() : ViewModel() {
 
     fun fetchRepositories(reposUrl: String) = viewModelScope.launch {
         if (repositories.value.isNullOrEmpty()) {
-            delay(1_000) // This is to simulate network latency, please don't remove!
+            delay(NETWORK_DELAY) // This is to simulate network latency, please don't remove!
             val response = withContext(Dispatchers.IO) {
                 service.getUserRepositories(reposUrl).execute()
             }
