@@ -2,21 +2,19 @@ package com.example.github.repositories.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.github.repositories.R
 import com.example.github.repositories.data.source.local.LocalDataStore
 import com.example.github.repositories.data.source.remote.RepositoryDTO
 import com.example.github.repositories.databinding.ItemBinding
-import com.example.github.repositories.ui.details.DetailFragment
 import java.util.*
 
-class RepositoryAdapter(
-    val list: List<RepositoryDTO>,
-    val activity: FragmentActivity
-) : RecyclerView.Adapter<RepositoryAdapter.ViewHolder>() {
+class RepositoryAdapter constructor(val itemClickListener: (RepositoryDTO) -> Unit) :
+    ListAdapter<RepositoryDTO, RepositoryAdapter.ViewHolder>(ItemsDiffCallback) {
 
-    override fun getItemCount(): Int = list.size
+    override fun getItemCount(): Int = currentList.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemBinding
@@ -32,14 +30,14 @@ class RepositoryAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bindData() {
-            val item = list[adapterPosition]
+            val item = currentList[adapterPosition]
 
             with(binding) {
                 title.text =
                     "#" + (adapterPosition + 1) + ": " + item.full_name?.uppercase(Locale.US)
 
                 description.text =
-                    if (item.description!!.length > 150) item.description?.take(150)
+                    if (item.description?.length ?: 0 > 150) item.description?.take(150)
                         .plus("...") else item.description
 
                 author.text = item.owner?.login
@@ -52,13 +50,19 @@ class RepositoryAdapter(
                 )
 
                 newsContainer.setOnClickListener {
-                    activity.supportFragmentManager
-                        .beginTransaction()
-                        .add(android.R.id.content, DetailFragment(item))
-                        .addToBackStack("detail")
-                        .commit()
+                    itemClickListener(item)
                 }
             }
+        }
+    }
+
+    object ItemsDiffCallback : DiffUtil.ItemCallback<RepositoryDTO>() {
+        override fun areItemsTheSame(oldItem: RepositoryDTO, newItem: RepositoryDTO): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: RepositoryDTO, newItem: RepositoryDTO): Boolean {
+            return oldItem == newItem
         }
     }
 }

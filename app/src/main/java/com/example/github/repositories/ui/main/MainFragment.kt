@@ -16,14 +16,18 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val repositoryAdapter = RepositoryAdapter(::onItemClicked)
 
         with(binding) {
-            swipeRefresh.setOnRefreshListener { viewModel.refresh() }
-            newsList.layoutManager = LinearLayoutManager(context)
+            swipeRefresh.setOnRefreshListener { viewModel.fetchItems(isForceFetch = true) }
 
-            viewModel.repositories.observeForever {
-                val adapter = RepositoryAdapter(it.take(20).toMutableList(), requireActivity())
-                newsList.adapter = adapter
+            newsList.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = repositoryAdapter
+            }
+
+            viewModel.repositories.observe(viewLifecycleOwner) {
+                repositoryAdapter.submitList(it.take(20))
             }
         }
     }

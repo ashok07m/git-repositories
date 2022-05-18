@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.github.repositories.data.source.remote.OwnerDTO
 import com.example.github.repositories.databinding.FragmentUserBinding
 import com.example.github.repositories.ui.adapters.RepositoryAdapter
@@ -20,19 +21,26 @@ class UserFragment(private val user: OwnerDTO) :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
+            val repositoryAdapter = RepositoryAdapter(::onItemClicked)
+
+            list.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = repositoryAdapter
+            }
+
             title.text = user.login
 
             Picasso.get().load(user.avatar_url.toUri()).into(image)
 
             viewModel.fetchUser(user.login)
 
-            viewModel.user.observeForever {
-                detail!!.text = "Twitter handle: " + it.twitter_username
-                viewModel.fetchRepositories(it.repos_url!!)
+            viewModel.user.observe(viewLifecycleOwner) { dto ->
+                detail.text = "Twitter handle: " + dto.twitter_username
+                dto.repos_url?.let { viewModel.fetchRepositories(it) }
             }
 
             viewModel.repositories.observeForever {
-                list!!.adapter = RepositoryAdapter(it.toMutableList(), requireActivity())
+                repositoryAdapter.submitList(it)
             }
         }
     }

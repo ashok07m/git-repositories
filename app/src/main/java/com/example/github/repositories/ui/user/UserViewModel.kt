@@ -1,7 +1,9 @@
 package com.example.github.repositories.ui.user
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.github.repositories.data.GITHUB_URL
 import com.example.github.repositories.data.source.remote.GitHubEndpoints
 import com.example.github.repositories.data.source.remote.RepositoryDTO
@@ -10,9 +12,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 
 @HiltViewModel
-class UserViewModel : ViewModel() {
+class UserViewModel @Inject constructor() : ViewModel() {
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(GITHUB_URL)
@@ -20,23 +23,29 @@ class UserViewModel : ViewModel() {
         .build()
     private val service: GitHubEndpoints = retrofit.create(GitHubEndpoints::class.java)
 
-    val user = MutableLiveData<UserDTO>()
-    val repositories = MutableLiveData<List<RepositoryDTO>>()
+    private val _user = MutableLiveData<UserDTO>()
+    val user: LiveData<UserDTO> = _user
 
-    fun fetchUser(username: String) {
-        // FIXME Use the proper scope
-        GlobalScope.launch(Dispatchers.IO) {
+    private val _repositories = MutableLiveData<List<RepositoryDTO>>()
+    val repositories: LiveData<List<RepositoryDTO>> = _repositories
+
+    fun fetchUser(username: String) = viewModelScope.launch {
+        if (user.value == null) {
             delay(1_000) // This is to simulate network latency, please don't remove!
-            val response = service.getUser(username).execute()
-            user.postValue(response.body()!!)
+            val response = withContext(Dispatchers.IO) {
+                service.getUser(username).execute()
+            }
+            response.body()?.let { _user.value = it }
         }
     }
 
-    fun fetchRepositories(reposUrl: String) {
-        GlobalScope.launch(Dispatchers.IO) {
+    fun fetchRepositories(reposUrl: String) = viewModelScope.launch {
+        if (repositories.value.isNullOrEmpty()) {
             delay(1_000) // This is to simulate network latency, please don't remove!
-            val response = service.getUserRepositories(reposUrl).execute()
-            repositories.postValue(response.body()!!)
+            val response = withContext(Dispatchers.IO) {
+                service.getUserRepositories(reposUrl).execute()
+            }
+            response.body()?.let { _repositories.value = it }
         }
     }
 }

@@ -4,3 +4,4 @@ const val GITHUB_URL = "https://api.github.com/"
 const val QUERY = "android+language:kotlin"
 const val SORT = "stars"
 const val ORDER = "desc"
+const val INITIAL_ITEMS_LOAD_COUNT = 20
