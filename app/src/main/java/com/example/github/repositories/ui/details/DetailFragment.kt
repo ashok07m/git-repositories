@@ -1,4 +1,4 @@
-package com.example.github.repositories
+package com.example.github.repositories.ui.details
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -8,8 +8,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.example.github.repositories.R
 import com.example.github.repositories.data.LocalDataStore
 import com.example.github.repositories.data.RepositoryDTO
+import com.example.github.repositories.ui.user.UserFragment
 import com.squareup.picasso.Picasso
 
 class DetailFragment(private val repository: RepositoryDTO) : Fragment() {

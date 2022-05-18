@@ -1,4 +1,4 @@
-package com.example.github.repositories
+package com.example.github.repositories.ui.main
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.github.repositories.R
+import com.example.github.repositories.ui.adapters.RepositoryAdapter
 
 class MainFragment : Fragment() {
 
