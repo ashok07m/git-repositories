@@ -9,8 +9,8 @@ import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.github.repositories.R
-import com.example.github.repositories.data.LocalDataStore
-import com.example.github.repositories.data.RepositoryDTO
+import com.example.github.repositories.data.source.local.LocalDataStore
+import com.example.github.repositories.data.source.remote.RepositoryDTO
 import com.example.github.repositories.ui.details.DetailFragment
 
 class RepositoryAdapter(

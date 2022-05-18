@@ -1,4 +1,6 @@
-package com.example.github.repositories.data
+package com.example.github.repositories.data.source.local
+
+import com.example.github.repositories.data.source.remote.RepositoryDTO
 
 class LocalDataStore private constructor() {
 

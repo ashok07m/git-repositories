@@ -1,4 +1,4 @@
-package com.example.github.repositories.data
+package com.example.github.repositories.data.source.remote
 
 import retrofit2.Call
 import retrofit2.http.GET

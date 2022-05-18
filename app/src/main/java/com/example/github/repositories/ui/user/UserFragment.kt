@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.github.repositories.R
 import com.example.github.repositories.ui.adapters.RepositoryAdapter
-import com.example.github.repositories.data.OwnerDTO
+import com.example.github.repositories.data.source.remote.OwnerDTO
 import com.squareup.picasso.Picasso
 
 class UserFragment(private val user: OwnerDTO) : Fragment() {

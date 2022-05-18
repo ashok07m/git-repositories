@@ -9,8 +9,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.github.repositories.R
-import com.example.github.repositories.data.LocalDataStore
-import com.example.github.repositories.data.RepositoryDTO
+import com.example.github.repositories.data.source.local.LocalDataStore
+import com.example.github.repositories.data.source.remote.RepositoryDTO
 import com.example.github.repositories.ui.user.UserFragment
 import com.squareup.picasso.Picasso
 
