@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.github.repositories.R
+import com.example.github.repositories.core.data.MAX_CHAR_COUNT
 import com.example.github.repositories.core.domain.Repository
 import com.example.github.repositories.databinding.ItemBinding
 import com.example.github.repositories.ui.utils.AppUtil
@@ -37,9 +38,10 @@ class RepositoryAdapter constructor(val itemClickListener: (Repository) -> Unit)
                 title.text =
                     "#" + (adapterPosition + 1) + ": " + item.full_name?.uppercase(Locale.US)
 
+                val ellipses = description.context.getString(R.string.ellipses)
                 description.text =
-                    if (item.description?.length ?: 0 > 150) item.description?.take(150)
-                        .plus("...") else item.description
+                    if (item.description?.length ?: 0 > MAX_CHAR_COUNT) item.description?.take(MAX_CHAR_COUNT)
+                        .plus(ellipses) else item.description
 
                 author.text = item.owner?.login
 
