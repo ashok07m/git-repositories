@@ -10,6 +10,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Qualifier
@@ -22,8 +24,21 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideRetrofitClient(): Retrofit {
+    fun provideOkHttpClient(): OkHttpClient {
+        val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+
+        return OkHttpClient.Builder().apply {
+            addInterceptor(httpLoggingInterceptor)
+        }.build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideRetrofitClient(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
+            .client(okHttpClient)
             .baseUrl(GITHUB_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

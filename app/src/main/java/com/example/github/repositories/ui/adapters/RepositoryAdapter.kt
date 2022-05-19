@@ -2,11 +2,14 @@ package com.example.github.repositories.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.github.repositories.R
 import com.example.github.repositories.core.domain.Repository
 import com.example.github.repositories.databinding.ItemBinding
+import com.example.github.repositories.ui.utils.AppUtil
 import java.util.*
 
 class RepositoryAdapter constructor(val itemClickListener: (Repository) -> Unit) :
@@ -40,18 +43,21 @@ class RepositoryAdapter constructor(val itemClickListener: (Repository) -> Unit)
 
                 author.text = item.owner?.login
 
-//                image.setImageResource(
-//                    if (LocalDataStore.instance.getBookmarks().contains(item))
-//                        R.drawable.baseline_bookmark_black_24
-//                    else
-//                        R.drawable.baseline_bookmark_border_black_24
-//                )
+                loadBookmarkStatus(item, image)
 
                 newsContainer.setOnClickListener {
                     itemClickListener(item)
                 }
             }
         }
+    }
+
+    private fun loadBookmarkStatus(item: Repository, image: ImageView) {
+        val icon = if (item.isBookMarked)
+            R.drawable.baseline_bookmark_black_24
+        else
+            R.drawable.baseline_bookmark_border_black_24
+        AppUtil.loadIcon(icon, image)
     }
 
     object ItemsDiffCallback : DiffUtil.ItemCallback<Repository>() {

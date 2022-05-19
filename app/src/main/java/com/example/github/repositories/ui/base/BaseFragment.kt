@@ -31,14 +31,4 @@ abstract class BaseFragment<VB : ViewBinding>(
         super.onDestroyView()
         _binding = null
     }
-
-    protected fun moveToFragment(fragment: Fragment, tag: String) {
-        activity?.let {
-            it.supportFragmentManager
-                .beginTransaction()
-                .add(android.R.id.content, fragment)
-                .addToBackStack(tag)
-                .commit()
-        }
-    }
 }

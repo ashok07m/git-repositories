@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Git Repositories</string>
+    <string name="label_git_repositories">Git Repositories</string>
+    <string name="label_detail">Detail</string>
+    <string name="label_user_detail">User Detail</string>
+    <string name="label_twitter_handle">Twitter handle</string>
+    <string name="label_created_by">Created by</string>
+    <string name="label_at">at</string>
 </resources>

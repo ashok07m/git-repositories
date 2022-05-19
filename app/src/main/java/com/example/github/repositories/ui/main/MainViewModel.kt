@@ -32,7 +32,7 @@ class MainViewModel @Inject constructor(private val useCases: UseCases) : ViewMo
             if (repositories.value.isNullOrEmpty() || isForceFetch) {
                 delay(NETWORK_DELAY) // This is to simulate network latency, please don't remove!
                 var response = fetchReposUseCase.invoke()
-                _repositories.value = response?.take(itemsToShow)
+                _repositories.value = response.take(itemsToShow)
             }
         }
 }

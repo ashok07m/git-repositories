@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/app_navigation.xml"
+    app:startDestination="@id/mainFragment">
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.example.github.repositories.ui.main.MainFragment"
+        android:label="@string/label_git_repositories" >
+        <action
+            android:id="@+id/action_mainFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.github.repositories.ui.details.DetailFragment"
+        android:label="@string/label_detail" >
+        <action
+            android:id="@+id/action_detailFragment_to_userFragment"
+            app:destination="@id/userFragment" />
+        <argument
+            android:name="extras_repository"
+            app:argType="com.example.github.repositories.core.domain.Repository" />
+    </fragment>
+    <fragment
+        android:id="@+id/userFragment"
+        android:name="com.example.github.repositories.ui.user.UserFragment"
+        android:label="@string/label_user_detail" >
+        <action
+            android:id="@+id/action_userFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+        <argument
+            android:name="extras_owner"
+            app:argType="com.example.github.repositories.core.domain.Owner" />
+    </fragment>
+</navigation>

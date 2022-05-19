@@ -3,33 +3,29 @@ package com.example.github.repositories.ui.details
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.github.repositories.R
-import com.example.github.repositories.core.data.local.LocalDataStoreImpl
 import com.example.github.repositories.core.domain.Repository
 import com.example.github.repositories.databinding.FragmentDetailBinding
-import com.example.github.repositories.ui.AppUtil
+import com.example.github.repositories.ui.utils.AppUtil
 import com.example.github.repositories.ui.base.BaseFragment
-import com.example.github.repositories.ui.main.MainViewModel
 import com.example.github.repositories.ui.user.UserFragment
-import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
-class DetailFragment(private val repository: Repository) :
-    BaseFragment<FragmentDetailBinding>(FragmentDetailBinding::inflate) {
+class DetailFragment : BaseFragment<FragmentDetailBinding>(FragmentDetailBinding::inflate) {
 
     private val viewModel: DetailsViewModel by viewModels()
-
+    private val safeArgs: DetailFragmentArgs by navArgs()
+    private val repository: Repository by lazy { safeArgs.extrasRepository }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         with(binding) {
             title.text = repository.name
             detail.text =
-                "Created by " + repository.owner?.login + ", at " + repository.created_at
+                getString(R.string.label_created_by) + " ${repository.owner?.login}, ${getString(R.string.label_at)}  ${repository.created_at}"
 
             description.text = repository.description
             url.text = repository.html_url
@@ -41,13 +37,13 @@ class DetailFragment(private val repository: Repository) :
             detail.setOnClickListener {
                 onItemClicked(repository)
             }
+        }
 
-            viewModel.run {
-                isRepositoryBookmarked(repository)
+        with(viewModel) {
+            isRepositoryBookmarked(repository)
 
-                bookmarkStatus.observe(viewLifecycleOwner) { status ->
-                    loadBookmarkIcon(status)
-                }
+            bookmarkStatus.observe(viewLifecycleOwner) { status ->
+                loadBookmarkIcon(status)
             }
         }
     }
@@ -61,11 +57,14 @@ class DetailFragment(private val repository: Repository) :
         AppUtil.loadIcon(resource, binding.image)
     }
 
-    private fun onItemClicked(item: Repository) {
-        item.owner?.let {
-            val fragment = UserFragment(it)
-            moveToFragment(fragment, "user")
+    /**
+     * Navigates to [UserFragment]
+     */
+    private fun onItemClicked(repository: Repository) {
+        repository.owner?.let {
+            val action =
+                DetailFragmentDirections.actionDetailFragmentToUserFragment(repository.owner)
+            findNavController().navigate(action)
         }
-
     }
 }

@@ -27,7 +27,8 @@ class UserViewModel @Inject constructor(
     private val _repositories = MutableLiveData<List<Repository>>()
     val repositories: LiveData<List<Repository>> = _repositories
 
-    fun fetchUser(username: String) = viewModelScope.launch {
+    fun fetchUser(username: String?) = viewModelScope.launch {
+        username ?: return@launch
         if (user.value == null) {
             delay(NETWORK_DELAY) // This is to simulate network latency, please don't remove!
             val response = useCases.fetchUserInfoUseCase.invoke(username)
@@ -35,11 +36,12 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    fun fetchRepositories(reposUrl: String) = viewModelScope.launch {
+    fun fetchRepositories(reposUrl: String?) = viewModelScope.launch {
+        reposUrl ?: return@launch
         if (repositories.value.isNullOrEmpty()) {
             delay(NETWORK_DELAY) // This is to simulate network latency, please don't remove!
             val response = useCases.fetchUserReposUseCase.invoke(reposUrl)
-            response?.let { _repositories.value = it }
+            response.let { _repositories.value = it }
         }
     }
 }
