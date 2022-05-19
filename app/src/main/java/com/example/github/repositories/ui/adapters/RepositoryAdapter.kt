@@ -5,8 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.github.repositories.R
-import com.example.github.repositories.core.data.local.LocalDataStore
 import com.example.github.repositories.core.domain.Repository
 import com.example.github.repositories.databinding.ItemBinding
 import java.util.*

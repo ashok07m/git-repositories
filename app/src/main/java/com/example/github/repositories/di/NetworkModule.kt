@@ -18,7 +18,7 @@ import kotlin.coroutines.CoroutineContext
 
 @Module
 @InstallIn(SingletonComponent::class)
-object NetworkModule {
+class NetworkModule {
 
     @Singleton
     @Provides
@@ -42,14 +42,5 @@ object NetworkModule {
     @IoDispatcher
     @Provides
     fun providesIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
-
-
-    @Retention(AnnotationRetention.BINARY)
-    @Qualifier
-    annotation class DefaultDispatcher
-
-    @Retention(AnnotationRetention.BINARY)
-    @Qualifier
-    annotation class IoDispatcher
 
 }

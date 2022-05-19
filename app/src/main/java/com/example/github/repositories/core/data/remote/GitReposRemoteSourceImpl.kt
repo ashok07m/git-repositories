@@ -7,15 +7,16 @@ import com.example.github.repositories.core.data.mappers.toRepositories
 import com.example.github.repositories.core.data.mappers.toUser
 import com.example.github.repositories.core.domain.Repository
 import com.example.github.repositories.core.domain.User
-import com.example.github.repositories.di.NetworkModule
+import com.example.github.repositories.di.DefaultDispatcher
+import com.example.github.repositories.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class GitReposRemoteSourceImpl @Inject constructor(
     private val gitReposApi: GitHubEndpoints,
-    @NetworkModule.IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    @NetworkModule.DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ) : GitReposRemoteSource {
 
     override suspend fun fetchGitRepos(): List<Repository> {

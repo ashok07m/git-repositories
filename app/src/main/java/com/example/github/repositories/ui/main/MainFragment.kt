@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.github.repositories.core.domain.Repository
 import com.example.github.repositories.databinding.FragmentMainBinding
 import com.example.github.repositories.ui.adapters.RepositoryAdapter
 import com.example.github.repositories.ui.base.BaseFragment
+import com.example.github.repositories.ui.details.DetailFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,4 +33,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
             }
         }
     }
+
+    private fun onItemClicked(item: Repository) {
+        val fragment = DetailFragment(item)
+        moveToFragment(fragment,"detail")
+    }
+
 }

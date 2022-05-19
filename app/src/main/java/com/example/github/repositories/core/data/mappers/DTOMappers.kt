@@ -31,3 +31,16 @@ fun UserDTO.toUser(): User {
         twitter_username = this.twitter_username,
     )
 }
+
+fun Repository.toRepositoryDTO(): RepositoryDTO {
+    return RepositoryDTO(
+        id = this.id,
+        name = this.name,
+        full_name = this.full_name,
+        private = this.private,
+        owner = this.owner,
+        html_url = this.html_url,
+        description = this.description,
+        created_at = this.created_at
+    )
+}

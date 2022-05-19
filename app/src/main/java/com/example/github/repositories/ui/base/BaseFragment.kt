@@ -32,12 +32,12 @@ abstract class BaseFragment<VB : ViewBinding>(
         _binding = null
     }
 
-    protected fun onItemClicked(item: Repository) {
+    protected fun moveToFragment(fragment: Fragment, tag: String) {
         activity?.let {
             it.supportFragmentManager
                 .beginTransaction()
-                .add(android.R.id.content, DetailFragment(item))
-                .addToBackStack("detail")
+                .add(android.R.id.content, fragment)
+                .addToBackStack(tag)
                 .commit()
         }
     }
