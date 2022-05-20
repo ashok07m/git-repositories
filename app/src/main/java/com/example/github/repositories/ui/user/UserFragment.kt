@@ -9,9 +9,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.github.repositories.R
 import com.example.github.repositories.core.domain.Owner
 import com.example.github.repositories.core.domain.Repository
+import com.example.github.repositories.core.domain.User
 import com.example.github.repositories.databinding.FragmentUserBinding
 import com.example.github.repositories.ui.adapters.RepositoryAdapter
 import com.example.github.repositories.ui.base.BaseFragment
+import com.example.github.repositories.ui.base.ViewStateResult
 import com.example.github.repositories.ui.details.DetailFragment
 import com.example.github.repositories.ui.utils.AppUtil
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,17 +29,54 @@ class UserFragment : BaseFragment<FragmentUserBinding>(FragmentUserBinding::infl
         super.onViewCreated(view, savedInstanceState)
 
         val repositoryAdapter = RepositoryAdapter(::onItemClicked)
-        viewModel.fetchUser(user.login)
+        fetchUser()
 
         with(binding) {
 
-            viewModel.user.observe(viewLifecycleOwner) { dto ->
-                detail.text = getString(R.string.label_twitter_handle) + ": ${dto.twitter_username}"
-                viewModel.fetchRepositories(dto.repos_url)
+            viewModel.userViewStateResult.observe(viewLifecycleOwner) { state ->
+                when (state) {
+                    is ViewStateResult.Success<*> -> {
+                        when (val data = state.data) {
+                            is User -> {
+                                detail.text =
+                                    getString(R.string.label_twitter_handle) + ": ${data.twitter_username}"
+                                fetchRepos(data.repos_url)
+                            }
+                        }
+                    }
+                    is ViewStateResult.Error -> {
+                        showError(
+                            view = binding.coordinatorLayout,
+                            message = state.errorMsg,
+                            action = { fetchUser() })
+                    }
+                }
             }
-
-            viewModel.repositories.observeForever {
-                repositoryAdapter.submitList(it)
+            viewModel.viewStateResult.observe(viewLifecycleOwner) { state ->
+                when (state) {
+                    is ViewStateResult.Loading -> {
+                        if (state.isLoading) {
+                            viewProgress.progressBar.visibility = View.VISIBLE
+                        } else {
+                            viewProgress.progressBar.visibility = View.GONE
+                        }
+                    }
+                    is ViewStateResult.Success<*> -> {
+                        when (val data = state.data) {
+                            is List<*> -> {
+                                repositoryAdapter.submitList(data as List<Repository>)
+                            }
+                        }
+                    }
+                    is ViewStateResult.Error -> {
+                        showError(
+                            view = binding.coordinatorLayout,
+                            message = state.errorMsg,
+                            action = {
+                                fetchRepos(viewModel.getReposUrl())
+                            })
+                    }
+                }
             }
 
             list.apply {
@@ -55,5 +94,13 @@ class UserFragment : BaseFragment<FragmentUserBinding>(FragmentUserBinding::infl
     private fun onItemClicked(repository: Repository) {
         val action = UserFragmentDirections.actionUserFragmentToDetailFragment(repository)
         findNavController().navigate(action)
+    }
+
+    private fun fetchRepos(url: String?) {
+        viewModel.fetchRepositories(url)
+    }
+
+    private fun fetchUser() {
+        viewModel.fetchUser(user.login)
     }
 }

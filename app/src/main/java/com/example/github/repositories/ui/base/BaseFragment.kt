@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
-import com.example.github.repositories.core.domain.Repository
-import com.example.github.repositories.ui.details.DetailFragment
+import com.example.github.repositories.R
+import com.google.android.material.snackbar.Snackbar
 
 typealias Inflate<T> = (LayoutInflater, ViewGroup?, Boolean) -> T
 
@@ -30,5 +30,15 @@ abstract class BaseFragment<VB : ViewBinding>(
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    protected fun showError(
+        view: View,
+        message: String,
+        actionText: String = getString(R.string.label_retry),
+        action: (View) -> Unit
+    ) {
+        Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE).setAction(actionText, action)
+            .show()
     }
 }

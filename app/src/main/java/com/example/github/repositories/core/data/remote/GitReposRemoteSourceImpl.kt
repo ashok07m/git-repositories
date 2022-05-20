@@ -5,6 +5,7 @@ import com.example.github.repositories.core.data.QUERY
 import com.example.github.repositories.core.data.SORT
 import com.example.github.repositories.core.data.mappers.toRepositories
 import com.example.github.repositories.core.data.mappers.toUser
+import com.example.github.repositories.core.domain.ApiResult
 import com.example.github.repositories.core.domain.Repository
 import com.example.github.repositories.core.domain.User
 import com.example.github.repositories.di.DefaultDispatcher
@@ -17,35 +18,57 @@ class GitReposRemoteSourceImpl @Inject constructor(
     private val gitReposApi: GitHubEndpoints,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
-) : GitReposRemoteSource {
+) : GitReposRemoteSource, BaseRepository(ioDispatcher) {
 
-    override suspend fun fetchGitRepos(): List<Repository> {
-        return withContext(ioDispatcher) {
-            val response = gitReposApi.searchRepositories(QUERY, SORT, ORDER).execute().body()
-            val repos = withContext(defaultDispatcher) {
-                response?.items?.toRepositories() ?: emptyList()
+    override suspend fun fetchGitRepos(): ApiResult<List<Repository>> {
+
+        val response =
+            executeRequest { gitReposApi.searchRepositories(QUERY, SORT, ORDER) }
+
+        return when (response) {
+            is ApiResult.Success -> {
+                val repos = withContext(defaultDispatcher) {
+                    response.data.items.toRepositories()
+                }
+                ApiResult.Success(repos)
             }
-            repos
+            is ApiResult.Error -> {
+                ApiResult.Error(response.exception)
+            }
         }
     }
 
-    override suspend fun fetchUserRepos(reposUrl: String): List<Repository> {
-        return withContext(ioDispatcher) {
-            val response = gitReposApi.getUserRepositories(reposUrl).execute().body()
-            val repos = withContext(defaultDispatcher) {
-                response?.toRepositories() ?: emptyList()
+    override suspend fun fetchUserRepos(reposUrl: String): ApiResult<List<Repository>> {
+        val response =
+            executeRequest { gitReposApi.getUserRepositories(reposUrl) }
+
+        return when (response) {
+            is ApiResult.Success -> {
+                val repos = withContext(defaultDispatcher) {
+                    response.data.toRepositories()
+                }
+                ApiResult.Success(repos)
             }
-            repos
+            is ApiResult.Error -> {
+                ApiResult.Error(response.exception)
+            }
         }
     }
 
-    override suspend fun fetchUserInfo(username: String): User? {
-        return withContext(ioDispatcher) {
-            val response = gitReposApi.getUser(username).execute().body()
-            val user = withContext(defaultDispatcher) {
-                response?.toUser()
+    override suspend fun fetchUserInfo(username: String): ApiResult<User?> {
+        val response =
+            executeRequest { gitReposApi.getUser(username) }
+
+        return when (response) {
+            is ApiResult.Success -> {
+                val repos = withContext(defaultDispatcher) {
+                    response.data.toUser()
+                }
+                ApiResult.Success(repos)
             }
-            user
+            is ApiResult.Error -> {
+                ApiResult.Error(response.exception)
+            }
         }
     }
 }

@@ -7,4 +7,7 @@
     <string name="label_created_by">Created by</string>
     <string name="label_at">at</string>
     <string name="ellipses">&#8230;</string>
+    <string name="error_no_internet">No internet available</string>
+    <string name="error_unable_to_load">Unable to fetch data from server. try again.</string>
+    <string name="label_retry">Retry</string>
 </resources>

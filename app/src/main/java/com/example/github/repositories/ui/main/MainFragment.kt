@@ -9,6 +9,7 @@ import com.example.github.repositories.core.domain.Repository
 import com.example.github.repositories.databinding.FragmentMainBinding
 import com.example.github.repositories.ui.adapters.RepositoryAdapter
 import com.example.github.repositories.ui.base.BaseFragment
+import com.example.github.repositories.ui.base.ViewStateResult
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -19,17 +20,39 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val repositoryAdapter = RepositoryAdapter(::onItemClicked)
+        viewModel.fetchItems()
 
         with(binding) {
-            swipeRefresh.setOnRefreshListener { viewModel.fetchItems(isForceFetch = true) }
+            swipeRefresh.setOnRefreshListener { fetchRepos() }
 
             newsList.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = repositoryAdapter
             }
 
-            viewModel.repositories.observe(viewLifecycleOwner) {
-                repositoryAdapter.submitList(it)
+            viewModel.viewStateResult.observe(viewLifecycleOwner) { state ->
+                when (state) {
+                    is ViewStateResult.Loading -> {
+                        if (state.isLoading) {
+                            viewProgress.progressBar.visibility = View.VISIBLE
+                        } else {
+                            swipeRefresh.isRefreshing = false
+                            viewProgress.progressBar.visibility = View.GONE
+                        }
+                    }
+                    is ViewStateResult.Success<*> -> {
+                        val data = state.data
+                        if (data is List<*>) {
+                            repositoryAdapter.submitList(data as List<Repository>)
+                        }
+                    }
+                    is ViewStateResult.Error -> {
+                        showError(
+                            view = binding.coordinatorLayout,
+                            message = state.errorMsg,
+                            action = { fetchRepos() })
+                    }
+                }
             }
         }
     }
@@ -40,5 +63,9 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
     private fun onItemClicked(repository: Repository) {
         val action = MainFragmentDirections.actionMainFragmentToDetailFragment(repository)
         findNavController().navigate(action)
+    }
+
+    private fun fetchRepos() {
+        viewModel.fetchItems(isForceFetch = true)
     }
 }

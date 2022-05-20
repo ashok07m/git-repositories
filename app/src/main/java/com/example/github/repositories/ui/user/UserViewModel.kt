@@ -1,47 +1,60 @@
 package com.example.github.repositories.ui.user
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.github.repositories.core.data.GITHUB_URL
-import com.example.github.repositories.core.data.NETWORK_DELAY
-import com.example.github.repositories.core.data.remote.GitHubEndpoints
-import com.example.github.repositories.core.domain.Repository
-import com.example.github.repositories.core.domain.User
+import com.example.github.repositories.core.domain.ApiResult
 import com.example.github.repositories.core.usecases.UseCases
+import com.example.github.repositories.ui.base.BaseViewModel
+import com.example.github.repositories.ui.base.ViewStateResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
+    @ApplicationContext val appContext: Context,
     private val useCases: UseCases
-) : ViewModel() {
+) : BaseViewModel(appContext) {
 
-    private val _user = MutableLiveData<User>()
-    val user: LiveData<User> = _user
+    private val _userViewStateResult = MutableLiveData<ViewStateResult>()
+    val userViewStateResult: LiveData<ViewStateResult> = _userViewStateResult
 
-    private val _repositories = MutableLiveData<List<Repository>>()
-    val repositories: LiveData<List<Repository>> = _repositories
+    private var reposUrl: String? = null
 
     fun fetchUser(username: String?) = viewModelScope.launch {
         username ?: return@launch
-        if (user.value == null) {
-            delay(NETWORK_DELAY) // This is to simulate network latency, please don't remove!
-            val response = useCases.fetchUserInfoUseCase.invoke(username)
-            response?.let { _user.value = it }
+        if (userViewStateResult.value is ViewStateResult.Success<*>) return@launch
+
+        when (val response = getApiResponse { useCases.fetchUserInfoUseCase.invoke(username) }) {
+            is ApiResult.Success -> {
+                _userViewStateResult.value = ViewStateResult.Success(response.data)
+                reposUrl = response.data?.repos_url
+            }
+            is ApiResult.Error -> {
+                val errorMessage = getNetworkErrorMessage(response.exception)
+                _userViewStateResult.value = ViewStateResult.Error(errorMessage)
+            }
         }
     }
 
     fun fetchRepositories(reposUrl: String?) = viewModelScope.launch {
         reposUrl ?: return@launch
-        if (repositories.value.isNullOrEmpty()) {
-            delay(NETWORK_DELAY) // This is to simulate network latency, please don't remove!
-            val response = useCases.fetchUserReposUseCase.invoke(reposUrl)
-            response.let { _repositories.value = it }
+        if (viewStateResult.value is ViewStateResult.Success<*>) return@launch
+
+        when (val response = getApiResponse { useCases.fetchUserReposUseCase.invoke(reposUrl) }) {
+            is ApiResult.Success -> {
+                val repos = response.data
+                _viewStateResult.value = ViewStateResult.Success(repos)
+            }
+            is ApiResult.Error -> {
+                val errorMessage = getNetworkErrorMessage(response.exception)
+                _viewStateResult.value = ViewStateResult.Error(errorMessage)
+            }
         }
     }
+
+    fun getReposUrl() = reposUrl
 }

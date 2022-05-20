@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.github.repositories.R
 import com.example.github.repositories.core.data.MAX_CHAR_COUNT
 import com.example.github.repositories.core.domain.Repository
-import com.example.github.repositories.databinding.ItemBinding
+import com.example.github.repositories.databinding.ViewRepositoryItemBinding
 import com.example.github.repositories.ui.utils.AppUtil
 import java.util.*
 
@@ -19,7 +19,7 @@ class RepositoryAdapter constructor(val itemClickListener: (Repository) -> Unit)
     override fun getItemCount(): Int = currentList.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemBinding
+        val binding = ViewRepositoryItemBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
@@ -28,7 +28,7 @@ class RepositoryAdapter constructor(val itemClickListener: (Repository) -> Unit)
         holder.bindData()
     }
 
-    inner class ViewHolder(private val binding: ItemBinding) :
+    inner class ViewHolder(private val binding: ViewRepositoryItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bindData() {
