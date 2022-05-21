@@ -22,6 +22,7 @@ class UserViewModel @Inject constructor(
 ) : BaseViewModel(appContext) {
 
     private val fetchUserReposUseCase = useCases.fetchUserReposUseCase
+    private val fetchReposUseCase = useCases.fetchReposUseCase
 
     private val _userViewStateResult = MutableLiveData<ViewStateResult>()
     val userViewStateResult: LiveData<ViewStateResult> = _userViewStateResult
@@ -32,7 +33,8 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             fetchUserReposUseCase.observeRepos().collect { repos ->
                 Log.d("TAG", "user flow called..")
-                _viewStateResult.value = ViewStateResult.Success(repos)
+                val updatedList = fetchReposUseCase.transformListData(repos)
+                _viewStateResult.value = ViewStateResult.Success(updatedList)
             }
         }
     }

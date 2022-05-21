@@ -35,14 +35,9 @@ class RepositoryAdapter constructor(val itemClickListener: (Repository) -> Unit)
             val item = currentList[adapterPosition]
 
             with(binding) {
-                title.text =
-                    "#" + (adapterPosition + 1) + ": " + item.full_name?.uppercase(Locale.US)
-
-                val ellipses = description.context.getString(R.string.ellipses)
-                description.text =
-                    if (item.description?.length ?: 0 > MAX_CHAR_COUNT) item.description?.take(MAX_CHAR_COUNT)
-                        .plus(ellipses) else item.description
-
+                title.text = StringBuilder().append("# ${adapterPosition + 1} : ${item.full_name}")
+                    .toString()
+                description.text = item.description
                 author.text = item.owner?.login
 
                 loadBookmarkStatus(item, image)

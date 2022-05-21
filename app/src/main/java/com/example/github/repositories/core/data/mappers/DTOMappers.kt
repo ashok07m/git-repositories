@@ -1,5 +1,6 @@
 package com.example.github.repositories.core.data.mappers
 
+import com.example.github.repositories.core.data.MAX_CHAR_COUNT
 import com.example.github.repositories.core.domain.Owner
 import com.example.github.repositories.core.domain.Repository
 import com.example.github.repositories.core.domain.response.RepositoryDTO

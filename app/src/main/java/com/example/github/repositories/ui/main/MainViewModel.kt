@@ -26,8 +26,9 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             fetchReposUseCase.observeRepos().collect { repos ->
                 Log.d("TAG", "flow called..")
+                val updatedList = fetchReposUseCase.transformListData(repos)
                 _viewStateResult.value =
-                    ViewStateResult.Success(repos.take(INITIAL_ITEMS_LOAD_COUNT))
+                    ViewStateResult.Success(updatedList.take(INITIAL_ITEMS_LOAD_COUNT))
             }
         }
     }
