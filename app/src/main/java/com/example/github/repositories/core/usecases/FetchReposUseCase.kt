@@ -9,4 +9,6 @@ class FetchReposUseCase @Inject constructor(private val gitRepository: GitReposi
     suspend operator fun invoke(): ApiResult<List<Repository>> {
         return gitRepository.fetchGitRepos()
     }
+
+    fun observeRepos() = gitRepository.gitReposSharedFlow
 }

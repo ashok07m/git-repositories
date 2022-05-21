@@ -10,4 +10,6 @@ class FetchUserReposUseCase @Inject constructor(private val gitRepository: GitRe
     suspend operator fun invoke(reposUrl: String): ApiResult<List<Repository>> {
         return gitRepository.fetchUserGitRepos(reposUrl)
     }
+
+    fun observeRepos() = gitRepository.userReposSharedFlow
 }

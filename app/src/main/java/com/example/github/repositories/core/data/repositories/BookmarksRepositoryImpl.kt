@@ -4,7 +4,10 @@ import com.example.github.repositories.core.data.local.LocalDataStore
 import com.example.github.repositories.core.domain.Repository
 import javax.inject.Inject
 
-class BookmarksRepositoryImpl @Inject constructor(private val localDataStore: LocalDataStore) :
+class BookmarksRepositoryImpl @Inject constructor(
+    private val localDataStore: LocalDataStore,
+    private val gitRepository: GitRepository
+) :
     BookmarksRepository {
 
     override suspend fun isRepositoryBookmarked(repository: Repository): Boolean {
@@ -12,11 +15,16 @@ class BookmarksRepositoryImpl @Inject constructor(private val localDataStore: Lo
     }
 
     override suspend fun bookmarkRepository(repository: Repository): Boolean {
-        return localDataStore.bookmarkRepository(repository)
+        val status = localDataStore.bookmarkRepository(repository)
+        gitRepository.updateBookmarkStatus(repository,true)
+        return status
+
     }
 
     override suspend fun unBookmarkRepository(repository: Repository): Boolean {
-        return localDataStore.unBookmarkRepository(repository)
+        val result = localDataStore.unBookmarkRepository(repository)
+        gitRepository.updateBookmarkStatus(repository,false)
+        return result
     }
 
     override suspend fun fetchBookmarkRepositories(): List<Repository> {

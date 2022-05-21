@@ -1,6 +1,7 @@
 package com.example.github.repositories.ui.user
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -10,7 +11,8 @@ import com.example.github.repositories.ui.base.BaseViewModel
 import com.example.github.repositories.ui.base.ViewStateResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,10 +21,21 @@ class UserViewModel @Inject constructor(
     private val useCases: UseCases
 ) : BaseViewModel(appContext) {
 
+    private val fetchUserReposUseCase = useCases.fetchUserReposUseCase
+
     private val _userViewStateResult = MutableLiveData<ViewStateResult>()
     val userViewStateResult: LiveData<ViewStateResult> = _userViewStateResult
 
     private var reposUrl: String? = null
+
+    init {
+        viewModelScope.launch {
+            fetchUserReposUseCase.observeRepos().collect { repos ->
+                Log.d("TAG", "user flow called..")
+                _viewStateResult.value = ViewStateResult.Success(repos)
+            }
+        }
+    }
 
     fun fetchUser(username: String?) = viewModelScope.launch {
         username ?: return@launch
@@ -46,8 +59,6 @@ class UserViewModel @Inject constructor(
 
         when (val response = getApiResponse { useCases.fetchUserReposUseCase.invoke(reposUrl) }) {
             is ApiResult.Success -> {
-                val repos = response.data
-                _viewStateResult.value = ViewStateResult.Success(repos)
             }
             is ApiResult.Error -> {
                 val errorMessage = getNetworkErrorMessage(response.exception)
