@@ -20,9 +20,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textColor="@color/black"
-            android:textSize="38dp"
+            android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/image"
+            app:layout_constraintEnd_toStartOf="@+id/imageThumb"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -37,7 +37,7 @@
             tools:text="@tools:sample/lorem" />
 
         <ImageView
-            android:id="@+id/image"
+            android:id="@+id/imageThumb"
             android:layout_width="86dp"
             android:layout_height="86dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -49,14 +49,14 @@
             android:layout_height="wrap_content"
             android:autoLink="web"
             android:textColor="@color/black"
-            android:textSize="18dp"
+            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/detail"
             tools:text="@tools:sample/lorem" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/list"
+            android:id="@+id/repos_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
