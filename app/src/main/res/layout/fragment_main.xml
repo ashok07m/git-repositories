@@ -15,10 +15,10 @@
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/news_list"
+                android:id="@+id/repos_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#ECEFF1" />
+                android:background="@color/grey_bg" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <include

@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.example.github.repositories.GitReposApp
 import com.example.github.repositories.R
+import com.example.github.repositories.ui.idlingResource.SimpleIdlingResource
 import com.google.android.material.snackbar.Snackbar
 
 typealias Inflate<T> = (LayoutInflater, ViewGroup?, Boolean) -> T
@@ -16,7 +18,9 @@ abstract class BaseFragment<VB : ViewBinding>(
 ) : Fragment() {
 
     private var _binding: VB? = null
-    val binding get() = _binding!!
+    protected val binding get() = _binding!!
+
+    protected val idlingResource: SimpleIdlingResource? by lazy { (activity?.applicationContext as GitReposApp).getIdlingResource() as SimpleIdlingResource? }
 
     override fun onCreateView(
         inflater: LayoutInflater,

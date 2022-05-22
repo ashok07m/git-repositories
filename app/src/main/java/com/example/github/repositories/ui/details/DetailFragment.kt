@@ -54,6 +54,7 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>(FragmentDetailBinding
         else
             R.drawable.baseline_bookmark_border_black_24
 
+        binding.image.tag = resource
         AppUtil.loadIcon(resource, binding.image)
     }
 

@@ -5,11 +5,13 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.github.repositories.GitReposApp
 import com.example.github.repositories.core.domain.Repository
 import com.example.github.repositories.databinding.FragmentMainBinding
 import com.example.github.repositories.ui.adapters.RepositoryAdapter
 import com.example.github.repositories.ui.base.BaseFragment
 import com.example.github.repositories.ui.base.ViewStateResult
+import com.example.github.repositories.ui.idlingResource.SimpleIdlingResource
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,11 +23,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
         super.onViewCreated(view, savedInstanceState)
         val repositoryAdapter = RepositoryAdapter(::onItemClicked)
         viewModel.fetchItems()
-
         with(binding) {
             swipeRefresh.setOnRefreshListener { fetchRepos() }
 
-            newsList.apply {
+            reposList.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = repositoryAdapter
             }
@@ -34,6 +35,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
                 when (state) {
                     is ViewStateResult.Loading -> {
                         if (state.isLoading) {
+                            idlingResource?.setIdleState(false)
                             viewProgress.progressBar.visibility = View.VISIBLE
                         } else {
                             swipeRefresh.isRefreshing = false
@@ -44,6 +46,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
                         val data = state.data
                         if (data is List<*>) {
                             repositoryAdapter.submitList(data as List<Repository>)
+                            idlingResource?.setIdleState(true)
                         }
                     }
                     is ViewStateResult.Error -> {

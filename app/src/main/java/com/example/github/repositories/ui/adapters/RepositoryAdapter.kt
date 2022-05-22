@@ -54,6 +54,8 @@ class RepositoryAdapter constructor(val itemClickListener: (Repository) -> Unit)
             R.drawable.baseline_bookmark_black_24
         else
             R.drawable.baseline_bookmark_border_black_24
+
+        image.tag = icon
         AppUtil.loadIcon(icon, image)
     }
 

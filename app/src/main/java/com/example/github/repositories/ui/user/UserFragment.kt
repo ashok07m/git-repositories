@@ -56,6 +56,7 @@ class UserFragment : BaseFragment<FragmentUserBinding>(FragmentUserBinding::infl
                 when (state) {
                     is ViewStateResult.Loading -> {
                         if (state.isLoading) {
+                            idlingResource?.setIdleState(false)
                             viewProgress.progressBar.visibility = View.VISIBLE
                         } else {
                             viewProgress.progressBar.visibility = View.GONE
@@ -65,6 +66,7 @@ class UserFragment : BaseFragment<FragmentUserBinding>(FragmentUserBinding::infl
                         when (val data = state.data) {
                             is List<*> -> {
                                 repositoryAdapter.submitList(data as List<Repository>)
+                                idlingResource?.setIdleState(true)
                             }
                         }
                     }
@@ -79,12 +81,12 @@ class UserFragment : BaseFragment<FragmentUserBinding>(FragmentUserBinding::infl
                 }
             }
 
-            list.apply {
+            reposList.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = repositoryAdapter
             }
             title.text = user.login
-            AppUtil.loadImageFromUri(user.avatar_url, image)
+            AppUtil.loadImageFromUri(user.avatar_url, imageThumb)
         }
     }
 
