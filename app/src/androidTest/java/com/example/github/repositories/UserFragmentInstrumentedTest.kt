@@ -16,9 +16,6 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class UserFragmentInstrumentedTest : BaseTest() {
 
-    private val testItemIndex = 1
-    private val testItemTitlePrefix = "# 1"
-
     @Test
     fun testUserScreenHasAllDetails() {
         val createdByText = context.getString(R.string.label_created_by)

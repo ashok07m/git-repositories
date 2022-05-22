@@ -2,6 +2,7 @@ package com.example.github.repositories.core.data.repositories
 
 import com.example.github.repositories.core.data.local.LocalDataStore
 import com.example.github.repositories.core.domain.Repository
+import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
 
 class BookmarksRepositoryImpl @Inject constructor(

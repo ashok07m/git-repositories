@@ -33,6 +33,9 @@ abstract class BaseTest {
 
     private var mIdlingResource: IdlingResource? = null
 
+    protected val testItemIndex = 1
+    protected val testItemTitlePrefix = "# 1"
+
     /**
      * Use [to launch and get access to the activity.][ActivityScenario.onActivity]
      */
@@ -59,18 +62,6 @@ abstract class BaseTest {
     }
 
 
-    protected fun isHaveLength(length: Int): TypeSafeMatcher<View?>? {
-        return object : TypeSafeMatcher<View?>() {
-
-            override fun matchesSafely(item: View?): Boolean {
-                return (item as TextView).text.length == length
-            }
-
-            override fun describeTo(description: Description?) {
-            }
-        }
-    }
-
     protected fun withImageDrawable(resourceId: Int): Matcher<View?>? {
         return object : BoundedMatcher<View?, ImageView>(ImageView::class.java) {
             override fun describeTo(description: Description) {
@@ -85,7 +76,7 @@ abstract class BaseTest {
 
     private fun sameBitmap(context: Context, drawable: Drawable, resourceId: Int): Boolean {
         var drawable: Drawable? = drawable
-        var otherDrawable: Drawable = context.getResources().getDrawable(resourceId)
+        var otherDrawable: Drawable = context.resources.getDrawable(resourceId)
         if (drawable == null || otherDrawable == null) {
             return false
         }

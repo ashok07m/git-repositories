@@ -5,6 +5,7 @@ import com.example.github.repositories.core.domain.ApiResult
 import com.example.github.repositories.core.domain.Repository
 import com.example.github.repositories.core.domain.User
 import com.example.github.repositories.di.DefaultDispatcher
+import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow

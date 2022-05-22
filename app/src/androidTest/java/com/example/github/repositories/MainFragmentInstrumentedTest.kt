@@ -16,11 +16,6 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class MainFragmentInstrumentedTest : BaseTest() {
 
-    private val ellipse = context.resources.getString(R.string.ellipses)
-
-    private val testItemIndex = 1
-    private val testItemTitlePrefix = "# 1"
-
     @Test
     fun testTitleShownInRepositoriesList() {
         onView(withId(R.id.repos_list))

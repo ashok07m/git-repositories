@@ -16,37 +16,14 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class BookmarkInstrumentedTest : BaseTest() {
 
-    private val testItemIndex = 1
-
     @Test
     fun testRepositoryBookmarkWorksFine() {
         performBookmark()
     }
 
-    private fun performBookmark() {
-        val createdByText = context.getString(R.string.label_created_by)
-        // click first item
-        onView(withId(R.id.repos_list))
-            .perform(
-                RecyclerViewActions.actionOnItemAtPosition<RepositoryAdapter.ViewHolder>(
-                    testItemIndex,
-                    click()
-                )
-            )
-        // validate details screen
-        onView(withText(startsWith(createdByText))).check(matches(isDisplayed()))
-        // check book mark status
-        onView(withId(R.id.image)).check(matches(withImageDrawable(R.drawable.baseline_bookmark_border_black_24)))
-        // click to bookmark
-        onView(withId(R.id.image)).perform(click())
-        // check bookmark status
-        onView(withId(R.id.image)).check(matches(withImageDrawable(R.drawable.baseline_bookmark_black_24)))
-
-    }
-
     @Test
     fun testRepositoryBookmarkUpdatesOnMainList() {
-        testRepositoryBookmarkWorksFine()
+        performBookmark()
         //  navigate back
         onView(withContentDescription(context.getString(androidx.navigation.ui.R.string.nav_app_bar_navigate_up_description))).perform(
             click()
@@ -95,5 +72,27 @@ class BookmarkInstrumentedTest : BaseTest() {
                     )
                 )
             )
+    }
+
+
+    private fun performBookmark() {
+        val createdByText = context.getString(R.string.label_created_by)
+        // click first item
+        onView(withId(R.id.repos_list))
+            .perform(
+                RecyclerViewActions.actionOnItemAtPosition<RepositoryAdapter.ViewHolder>(
+                    testItemIndex,
+                    click()
+                )
+            )
+        // validate details screen
+        onView(withText(startsWith(createdByText))).check(matches(isDisplayed()))
+        // check book mark status
+        onView(withId(R.id.image)).check(matches(withImageDrawable(R.drawable.baseline_bookmark_border_black_24)))
+        // click to bookmark
+        onView(withId(R.id.image)).perform(click())
+        // check bookmark status
+        onView(withId(R.id.image)).check(matches(withImageDrawable(R.drawable.baseline_bookmark_black_24)))
+
     }
 }
